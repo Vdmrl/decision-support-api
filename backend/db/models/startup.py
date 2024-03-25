@@ -1,8 +1,8 @@
 from typing import List, Optional
 
-from sqlalchemy import Column, Date, DateTime, Float, ForeignKeyConstraint, Index, Integer, String, Text, text
+from sqlalchemy import Date, DateTime, Float, ForeignKeyConstraint, Index, Integer, String, Text, text
 from sqlalchemy.dialects.mysql import LONGTEXT, TINYINT
-from sqlalchemy.orm import Mapped, declarative_base, mapped_column, relationship
+from sqlalchemy.orm import declarative_base, mapped_column, relationship
 from sqlalchemy.orm.base import Mapped
 
 Base = declarative_base()
@@ -558,8 +558,7 @@ class Users(Base):
     utm_role: Mapped[List['UtmRole']] = relationship('UtmRole', uselist=True, back_populates='users')
     allow_forms: Mapped[List['AllowForms']] = relationship('AllowForms', uselist=True, back_populates='users')
     certificates: Mapped[List['Certificates']] = relationship('Certificates', uselist=True, back_populates='users')
-    learning_leader: Mapped[List['LearningLeader']] = relationship('LearningLeader', uselist=True,
-                                                                   back_populates='users')
+    learning_leader: Mapped[List['LearningLeader']] = relationship('LearningLeader', uselist=True,back_populates='users')
     lecturers: Mapped[List['Lecturers']] = relationship('Lecturers', uselist=True, back_populates='users')
     tracking_storage: Mapped[List['TrackingStorage']] = relationship('TrackingStorage', uselist=True,
                                                                      back_populates='users')
@@ -1925,28 +1924,28 @@ class FeedbackSetsValuesTemplateFields(Base):
     class LearningLeader(Base):
         __tablename__ = 'learning_leader'
 
-    __table_args__ = (
-        ForeignKeyConstraint(['learning_topics_id_learning_topics'], ['learning_topics.id_learning_topics'],
-                             name='fk_learning_leader_learning_topics1'),
-        ForeignKeyConstraint(['projects_id_projects'], ['projects.id_projects'], name='fk_learning_leader_projects1'),
-        ForeignKeyConstraint(['users_id'], ['users.id'], name='fk_learning_leader_users1'),
-        Index('fk_learning_leader_learning_topics1_idx', 'learning_topics_id_learning_topics'),
-        Index('fk_learning_leader_projects1_idx', 'projects_id_projects'),
-        Index('fk_learning_leader_users1_idx', 'users_id')
-    )
+        __table_args__ = (
+            ForeignKeyConstraint(['learning_topics_id_learning_topics'], ['learning_topics.id_learning_topics'],
+                                 name='fk_learning_leader_learning_topics1'),
+            ForeignKeyConstraint(['projects_id_projects'], ['projects.id_projects'], name='fk_learning_leader_projects1'),
+            ForeignKeyConstraint(['users_id'], ['users.id'], name='fk_learning_leader_users1'),
+            Index('fk_learning_leader_learning_topics1_idx', 'learning_topics_id_learning_topics'),
+            Index('fk_learning_leader_projects1_idx', 'projects_id_projects'),
+            Index('fk_learning_leader_users1_idx', 'users_id')
+        )
 
-    id_learning_leader = mapped_column(Integer, primary_key=True)
-    users_id = mapped_column(Integer, nullable=False)
-    learning_topics_id_learning_topics = mapped_column(Integer, nullable=False)
-    projects_id_projects = mapped_column(Integer, nullable=False)
-    full_response = mapped_column(Text)
-    status = mapped_column(String(255))
-    date_creation = mapped_column(DateTime, server_default=text('CURRENT_TIMESTAMP'))
-    message = mapped_column(Text)
+        id_learning_leader = mapped_column(Integer, primary_key=True)
+        users_id = mapped_column(Integer, nullable=False)
+        learning_topics_id_learning_topics = mapped_column(Integer, nullable=False)
+        projects_id_projects = mapped_column(Integer, nullable=False)
+        full_response = mapped_column(Text)
+        status = mapped_column(String(255))
+        date_creation = mapped_column(DateTime, server_default=text('CURRENT_TIMESTAMP'))
+        message = mapped_column(Text)
 
-    learning_topics: Mapped['LearningTopics'] = relationship('LearningTopics', back_populates='learning_leader')
-    projects: Mapped['Projects'] = relationship('Projects', back_populates='learning_leader')
-    users: Mapped['Users'] = relationship('Users', back_populates='learning_leader')
+        learning_topics: Mapped['LearningTopics'] = relationship('LearningTopics', back_populates='learning_leader')
+        projects: Mapped['Projects'] = relationship('Projects', back_populates='learning_leader')
+        users: Mapped['Users'] = relationship('Users', back_populates='learning_leader')
 
 
 class LearningStat(Base):
