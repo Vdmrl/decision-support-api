@@ -1002,6 +1002,8 @@ class Supports(Base):
     institutes_id_institutes = mapped_column(Integer)
     support_name = mapped_column(String(600))
     support_name_manual = mapped_column(String(600))
+    # divide description by requirements and description
+    requirements = mapped_column(Text)
     description = mapped_column(Text)
     site = mapped_column(String(600))
     logo = mapped_column(String(600))
@@ -2067,7 +2069,11 @@ class ProjectData(Base):
     __table_args__ = (
         ForeignKeyConstraint(['projects_id_projects'], ['projects.id_projects'], ondelete='CASCADE',
                              name='fk_project_data_projects1'),
-        Index('fk_project_data_projects1_idx', 'projects_id_projects')
+        Index('fk_project_data_projects1_idx', 'projects_id_projects'),
+
+        ForeignKeyConstraint(['form_fields_id_form_fields'], ['form_fields.id_form_fields'], ondelete='CASCADE',
+                             name='fk_form_fields_id_form_fields1'),
+        Index('fk_form_fields_id_form_fields1_idx', 'form_fields_id_form_fields')
     )
 
     id_project_data = mapped_column(Integer, primary_key=True)
@@ -2078,8 +2084,10 @@ class ProjectData(Base):
     label = mapped_column(String(255))
     file = mapped_column(TINYINT)
     step = mapped_column(Integer)
+    form_fields_id_form_fields = mapped_column(Integer, nullable=False)
 
     projects: Mapped['Projects'] = relationship('Projects', back_populates='project_data')
+    form_fields: Mapped['FormFields'] = relationship('FormFields', back_populates='project_data')
 
 
 class ProjectModerComments(Base):
