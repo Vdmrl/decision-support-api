@@ -2,10 +2,9 @@ from typing import List, Optional
 
 from sqlalchemy import Date, DateTime, Float, ForeignKeyConstraint, Index, Integer, String, Text, text
 from sqlalchemy.dialects.mysql import LONGTEXT, TINYINT
-from sqlalchemy.orm import declarative_base, mapped_column, relationship
+from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.orm.base import Mapped
-
-Base = declarative_base()
+from db.engine import Base
 
 
 class ApiSettings(Base):

@@ -5,7 +5,7 @@ from sqlalchemy import String, create_engine
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
-from backend.db.config import settings
+from db.config import settings
 
 sync_engine = create_engine(
     url=settings.DATABASE_URL_pymysql,
@@ -24,7 +24,6 @@ str_256 = Annotated[str, 256]
 
 
 class Base(DeclarativeBase):
-    pass
     type_annotation_map = {
         str_256: String(256)
     }
