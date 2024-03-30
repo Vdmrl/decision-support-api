@@ -1,9 +1,9 @@
 from logging.config import fileConfig
-from sqlalchemy import engine_from_config,pool
+from sqlalchemy import engine_from_config, pool
 from alembic import context
 
 from db.config import settings
-from db.models.startup import * # noqa
+from db.models.startup import Users # noqa
 from db.engine import Base
 
 # this is the Alembic Config object, which provides

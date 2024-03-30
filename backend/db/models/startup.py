@@ -482,9 +482,9 @@ class Users(Base):
     first_name = mapped_column(String(255))
     last_name = mapped_column(String(255))
     patronymic = mapped_column(String(255))
-    country = mapped_column(String(255))
-    region = mapped_column(String(255))
-    locality = mapped_column(String(255))
+    country = mapped_column(String(255))  # used
+    region = mapped_column(String(255))  # used
+    locality = mapped_column(String(255))  # used
     email = mapped_column(String(255))
     phone = mapped_column(String(200))
     password = mapped_column(String(255))
@@ -492,39 +492,39 @@ class Users(Base):
     activate = mapped_column(TINYINT)
     date_reg = mapped_column(Date)
     date_of_birth = mapped_column(Date)
-    place_of_work_study = mapped_column(String(400))
-    name_of_company = mapped_column(String(400))
-    position = mapped_column(String(400))
-    education = mapped_column(String(600))
-    specialty = mapped_column(String(600))
-    university = mapped_column(String(255))
-    academic_degree = mapped_column(String(255))
-    academic_rank = mapped_column(String(255))
-    experience = mapped_column(Text)
-    progress = mapped_column(Text)
+    place_of_work_study = mapped_column(String(400))  # used
+    name_of_company = mapped_column(String(400))  # used
+    position = mapped_column(String(400))  # used
+    education = mapped_column(String(600))  # used
+    specialty = mapped_column(String(600))  # used
+    university = mapped_column(String(255))  # used
+    academic_degree = mapped_column(String(255))  # used
+    academic_rank = mapped_column(String(255))  # used
+    experience = mapped_column(Text)  # used
+    progress = mapped_column(Text)  # used
     skype = mapped_column(String(255))
     facebook = mapped_column(String(255))
     vk = mapped_column(String(255))
-    resume1 = mapped_column(Text)
-    resume2 = mapped_column(Text)
-    resume3 = mapped_column(String(500))
+    resume1 = mapped_column(Text)  # used
+    resume2 = mapped_column(Text)  # used
+    resume3 = mapped_column(String(500))  # used
     photo = mapped_column(String(255))
     photo_thumb = mapped_column(String(255))
     inn = mapped_column(String(256))
-    year_of_graduation = mapped_column(String(45))
-    scientific_specialty = mapped_column(Text)
-    work_experience = mapped_column(Text)
-    tracking_experience = mapped_column(Text)
-    business_experience = mapped_column(Text)
-    teaching_experience = mapped_column(Text)
-    expertise_experience = mapped_column(Text)
+    year_of_graduation = mapped_column(String(45))  # used
+    scientific_specialty = mapped_column(Text)  # used
+    work_experience = mapped_column(Text)  # used
+    tracking_experience = mapped_column(Text)  # used
+    business_experience = mapped_column(Text)  # used
+    teaching_experience = mapped_column(Text)  # used
+    expertise_experience = mapped_column(Text)  # used
     number_of_publications = mapped_column(Integer)
     number_of_scopus = mapped_column(Integer)
     h_index_rsci = mapped_column(Integer)
     h_index_scopus = mapped_column(Integer)
-    main_publications = mapped_column(Text)
-    languages = mapped_column(Text)
-    programs = mapped_column(Text)
+    main_publications = mapped_column(Text)  # used
+    languages = mapped_column(Text)  # used
+    programs = mapped_column(Text)  # used
     activate_email_key = mapped_column(String(255))
     activate_email = mapped_column(TINYINT(1))
     max_events = mapped_column(Integer, server_default=text("'0'"))
@@ -557,7 +557,8 @@ class Users(Base):
     utm_role: Mapped[List['UtmRole']] = relationship('UtmRole', uselist=True, back_populates='users')
     allow_forms: Mapped[List['AllowForms']] = relationship('AllowForms', uselist=True, back_populates='users')
     certificates: Mapped[List['Certificates']] = relationship('Certificates', uselist=True, back_populates='users')
-    learning_leader: Mapped[List['LearningLeader']] = relationship('LearningLeader', uselist=True,back_populates='users')
+    learning_leader: Mapped[List['LearningLeader']] = relationship('LearningLeader', uselist=True,
+                                                                   back_populates='users')
     lecturers: Mapped[List['Lecturers']] = relationship('Lecturers', uselist=True, back_populates='users')
     tracking_storage: Mapped[List['TrackingStorage']] = relationship('TrackingStorage', uselist=True,
                                                                      back_populates='users')
@@ -732,6 +733,7 @@ class FeedbackFormFields(Base):
 
 class FormFields(Base):
     __tablename__ = 'form_fields'
+
     __table_args__ = (
         ForeignKeyConstraint(['field_types_id_field_types'], ['field_types.id_field_types'], ondelete='CASCADE',
                              name='fk_forms_field_types1'),
@@ -763,7 +765,7 @@ class FormFields(Base):
                                                                  back_populates='form_fields')
     sets_values_fields: Mapped[List['SetsValuesFields']] = relationship('SetsValuesFields', uselist=True,
                                                                         back_populates='form_fields')
-
+    project_data: Mapped[List['ProjectData']] = relationship('ProjectData', back_populates='form_fields')
 
 class IndustryDirections(Base):
     __tablename__ = 'industry_directions'
@@ -1922,31 +1924,30 @@ class FeedbackSetsValuesTemplateFields(Base):
     template_feedback_form_fields: Mapped['TemplateFeedbackFormFields'] = relationship('TemplateFeedbackFormFields',
                                                                                        back_populates='feedback_sets_values_template_fields')
 
-    class LearningLeader(Base):
-        __tablename__ = 'learning_leader'
 
-        __table_args__ = (
-            ForeignKeyConstraint(['learning_topics_id_learning_topics'], ['learning_topics.id_learning_topics'],
-                                 name='fk_learning_leader_learning_topics1'),
-            ForeignKeyConstraint(['projects_id_projects'], ['projects.id_projects'], name='fk_learning_leader_projects1'),
-            ForeignKeyConstraint(['users_id'], ['users.id'], name='fk_learning_leader_users1'),
-            Index('fk_learning_leader_learning_topics1_idx', 'learning_topics_id_learning_topics'),
-            Index('fk_learning_leader_projects1_idx', 'projects_id_projects'),
-            Index('fk_learning_leader_users1_idx', 'users_id')
-        )
-
-        id_learning_leader = mapped_column(Integer, primary_key=True)
-        users_id = mapped_column(Integer, nullable=False)
-        learning_topics_id_learning_topics = mapped_column(Integer, nullable=False)
-        projects_id_projects = mapped_column(Integer, nullable=False)
-        full_response = mapped_column(Text)
-        status = mapped_column(String(255))
-        date_creation = mapped_column(DateTime, server_default=text('CURRENT_TIMESTAMP'))
-        message = mapped_column(Text)
-
-        learning_topics: Mapped['LearningTopics'] = relationship('LearningTopics', back_populates='learning_leader')
-        projects: Mapped['Projects'] = relationship('Projects', back_populates='learning_leader')
-        users: Mapped['Users'] = relationship('Users', back_populates='learning_leader')
+class LearningLeader(Base):
+    __tablename__ = 'learning_leader'
+    __table_args__ = (
+        ForeignKeyConstraint(['learning_topics_id_learning_topics'], ['learning_topics.id_learning_topics'],
+                             name='fk_learning_leader_learning_topics1'),
+        ForeignKeyConstraint(['projects_id_projects'], ['projects.id_projects'],
+                             name='fk_learning_leader_projects1'),
+        ForeignKeyConstraint(['users_id'], ['users.id'], name='fk_learning_leader_users1'),
+        Index('fk_learning_leader_learning_topics1_idx', 'learning_topics_id_learning_topics'),
+        Index('fk_learning_leader_projects1_idx', 'projects_id_projects'),
+        Index('fk_learning_leader_users1_idx', 'users_id')
+    )
+    id_learning_leader = mapped_column(Integer, primary_key=True)
+    users_id = mapped_column(Integer, nullable=False)
+    learning_topics_id_learning_topics = mapped_column(Integer, nullable=False)
+    projects_id_projects = mapped_column(Integer, nullable=False)
+    full_response = mapped_column(Text)
+    status = mapped_column(String(255))
+    date_creation = mapped_column(DateTime, server_default=text('CURRENT_TIMESTAMP'))
+    message = mapped_column(Text)
+    learning_topics: Mapped['LearningTopics'] = relationship('LearningTopics', back_populates='learning_leader')
+    projects: Mapped['Projects'] = relationship('Projects', back_populates='learning_leader')
+    users: Mapped['Users'] = relationship('Users', back_populates='learning_leader')
 
 
 class LearningStat(Base):
