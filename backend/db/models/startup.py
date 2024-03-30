@@ -370,7 +370,7 @@ class Forms(Base):
     id_forms = mapped_column(Integer, primary_key=True)
     event_statuses_id_event_statuses = mapped_column(Integer, nullable=False)
     form_name = mapped_column(String(1000))
-    description = mapped_column(Text)
+    description = mapped_column(Text)  # used
     date_end = mapped_column(DateTime)
     date_start = mapped_column(DateTime)
     logo = mapped_column(String(255))
@@ -387,8 +387,8 @@ class Forms(Base):
     file3 = mapped_column(String(255))
     tag = mapped_column(String(255))
     background_thumb = mapped_column(String(255))
-    members = mapped_column(Text)
-    event_format = mapped_column(String(100))
+    members = mapped_column(Text)  # used
+    event_format = mapped_column(String(100))  # used
     date_event_end = mapped_column(DateTime)
     date_event_start = mapped_column(DateTime)
     date_expertises_start = mapped_column(DateTime)
@@ -1004,8 +1004,6 @@ class Supports(Base):
     institutes_id_institutes = mapped_column(Integer)
     support_name = mapped_column(String(600))
     support_name_manual = mapped_column(String(600))
-    # divide description by requirements and description
-    requirements = mapped_column(Text)
     description = mapped_column(Text)
     site = mapped_column(String(600))
     logo = mapped_column(String(600))

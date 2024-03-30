@@ -1,7 +1,7 @@
 """fk projectdata to formfields
 
 Revision ID: 723c2e47c880
-Revises: 86058d29f193
+Revises: b0fddd75df25
 Create Date: 2024-03-29 18:45:17.765372
 
 """
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = '723c2e47c880'
-down_revision: Union[str, None] = '86058d29f193'
+down_revision: Union[str, None] = 'b0fddd75df25'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
