@@ -9,7 +9,7 @@ from db.models.startup import Passports, PassportData, PassportFields  # project
 from db.models.startup import (Supports, SupportSupportForms, SupportForms, SupportSupportMembers, SupportMembers,
                                SupportSupportReasons, SupportReasons, SupportSupportDirections, SupportDirections,
                                SupportRegions, Regions)
-from db.models.startup import (Institutes, InstitutionInstitutionForms, InstitutionRegions)
+from db.models.startup import (Institutes, InstitutionInstitutionForms, InstitutionForms, InstitutionRegions, Regions)
 
 import logging
 
@@ -114,8 +114,74 @@ class SupportData:
         denormalizes support measures data into text
         :rtype: support id pk
         """
-        # TODO
-        pass
+        async with async_session_factory() as session:
+            query = (
+                select(Supports)
+                .options(
+                    # forms
+                    selectinload(Supports.support_support_forms)  # one-to-many
+                    .joinedload(SupportSupportForms.support_forms),  # many-to-one
+                    # directions
+                    selectinload(Supports.support_support_directions)  # one-to-many
+                    .joinedload(SupportSupportDirections.support_directions),  # many-to-one
+                    # reasons
+                    selectinload(Supports.support_support_reasons)  # one-to-many
+                    .joinedload(SupportSupportReasons.support_reasons),  # many-to-one
+                    # members
+                    selectinload(Supports.support_support_members)  # one-to-many
+                    .joinedload(SupportSupportMembers.support_members),  # many-to-one
+                    # regions
+                    selectinload(Supports.support_regions)  # one-to-many
+                    .joinedload(SupportRegions.regions),  # many-to-one
+                )
+                .where(Supports.id_supports == id_support)
+            )
+            result = await session.execute(query)
+            support = result.scalar_one_or_none()
+            if support:
+                self.texts.append(support.description)
+                # support forms
+                support_support_forms = support.support_support_forms
+                if support_support_forms:
+                    for support_support_form in support_support_forms:
+                        support_form = support_support_form.support_forms
+                        if support_form:
+                            self.texts.append(support_form.support_form_name)
+
+                # support directions
+                support_support_directions = support.support_support_directions
+                if support_support_directions:
+                    for support_support_direction in support_support_directions:
+                        support_direction = support_support_direction.support_directions
+                        if support_direction:
+                            self.texts.append(support_direction.support_direction_name)
+
+                # support reasons
+                support_support_reasons = support.support_support_reasons
+                if support_support_reasons:
+                    for support_support_reason in support_support_reasons:
+                        support_reason = support_support_reason.support_reasons
+                        if support_reason:
+                            self.texts.append(support_reason.support_reason_name)
+
+                # support members
+                support_support_members = support.support_support_members
+                if support_support_members:
+                    for support_support_member in support_support_members:
+                        support_member = support_support_member.support_members
+                        if support_member:
+                            self.texts.append(support_member.support_members_name)
+
+                # support regions
+                support_regions = support.support_regions
+                if support_regions:
+                    for support_region in support_regions:
+                        region = support_region.regions
+                        if region:
+                            self.texts.append(region.region_name)
+                            self.texts.append(region.region_code)
+            else:
+                logging.warning("no support in data_to_text")
 
     async def institute_to_texts(self, id_support: int) -> None:
         """
@@ -126,13 +192,13 @@ class SupportData:
             query = (
                 select(Supports)
                 .options(
-                    joinedload(Supports.institutes).options(
-                        selectinload(Institutes.institution_institution_forms)
-                        .joinedload(InstitutionInstitutionForms.institution_forms),
-                        selectinload(Institutes.institution_regions)
-                        .joinedload(InstitutionRegions.regions)
+                    joinedload(Supports.institutes).options(  # many-to-one
+                        selectinload(Institutes.institution_institution_forms)  # one-to-many
+                        .joinedload(InstitutionInstitutionForms.institution_forms),  # many-to-one
+                        selectinload(Institutes.institution_regions)  # one-to-many
+                        .joinedload(InstitutionRegions.regions)  # many-to-one
                     )
-                )  # many-to-one
+                )
                 .where(Supports.id_supports == id_support)
             )
             result = await session.execute(query)

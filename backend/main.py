@@ -10,6 +10,7 @@ async def main():
 
     support_data = SupportData()
     await support_data.institute_to_texts(1)
+    await support_data.support_to_texts(1)
     print(support_data.texts)
 
 if __name__ == "__main__":

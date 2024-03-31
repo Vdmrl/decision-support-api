@@ -289,7 +289,7 @@ class SupportDirections(Base):
     __tablename__ = 'support_directions'
 
     id_support_directions = mapped_column(Integer, primary_key=True)
-    support_direction_name = mapped_column(String(600))
+    support_direction_name = mapped_column(String(600))  # used
 
     support_support_directions: Mapped[List['SupportSupportDirections']] = relationship('SupportSupportDirections',
                                                                                         uselist=True,
@@ -300,7 +300,7 @@ class SupportForms(Base):
     __tablename__ = 'support_forms'
 
     id_support_forms = mapped_column(Integer, primary_key=True)
-    support_form_name = mapped_column(String(600))
+    support_form_name = mapped_column(String(600))  # used
 
     support_support_forms: Mapped[List['SupportSupportForms']] = relationship('SupportSupportForms', uselist=True,
                                                                               back_populates='support_forms')
@@ -310,7 +310,7 @@ class SupportMembers(Base):
     __tablename__ = 'support_members'
 
     id_support_members = mapped_column(Integer, primary_key=True)
-    support_members_name = mapped_column(String(600))
+    support_members_name = mapped_column(String(600))  # used
 
     support_support_members: Mapped[List['SupportSupportMembers']] = relationship('SupportSupportMembers', uselist=True,
                                                                                   back_populates='support_members')
@@ -320,7 +320,7 @@ class SupportReasons(Base):
     __tablename__ = 'support_reasons'
 
     id_support_reasons = mapped_column(Integer, primary_key=True)
-    support_reason_name = mapped_column(String(600))
+    support_reason_name = mapped_column(String(600)) # used
 
     support_support_reasons: Mapped[List['SupportSupportReasons']] = relationship('SupportSupportReasons', uselist=True,
                                                                                   back_populates='support_reasons')
@@ -1005,7 +1005,7 @@ class Supports(Base):
     institutes_id_institutes = mapped_column(Integer)
     support_name = mapped_column(String(600))
     support_name_manual = mapped_column(String(600))
-    description = mapped_column(Text)
+    description = mapped_column(Text)  # used
     site = mapped_column(String(600))
     logo = mapped_column(String(600))
     no_finance = mapped_column(TINYINT(1))
