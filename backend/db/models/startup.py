@@ -897,7 +897,7 @@ class Passports(Base):
     date_start = mapped_column(Date)
     date_end = mapped_column(Date)
     status = mapped_column(String(600))
-    description = mapped_column(Text)
+    description = mapped_column(Text) # used
 
     forms: Mapped['Forms'] = relationship('Forms', back_populates='passports')
     passport_fields: Mapped[List['PassportFields']] = relationship('PassportFields', uselist=True,

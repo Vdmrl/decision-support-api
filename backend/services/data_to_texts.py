@@ -3,7 +3,7 @@ from sqlalchemy.orm import joinedload, selectinload
 
 from db.engine import async_session_factory
 from db.models.startup import Users, UserProject  # account
-from db.models.startup import Projects, ProjectData, Forms, FormFields  # project data
+from db.models.startup import Projects, ProjectData, Forms, FormFields, Passports  # project data
 from db.models.startup import Passports, PassportData, PassportFields  # project passports
 
 from db.models.startup import (Supports, SupportSupportForms, SupportForms, SupportSupportMembers, SupportMembers,
@@ -97,7 +97,10 @@ class UserData:
         async with async_session_factory() as session:
             query = (
                 select(Projects)
-                .options(joinedload(Projects.forms))  # many-to-one
+                .options(
+                    joinedload(Projects.forms).options(
+                        selectinload(Forms.passports)
+                    ))  # many-to-one
                 .where(Projects.id_projects == id_project)
             )
             result = await session.execute(query)
@@ -105,9 +108,14 @@ class UserData:
             if project:
                 event = project.forms
                 if event:
+                    # event
                     self.texts.append(event.description)
                     self.texts.append(event.members)
                     self.texts.append(event.event_format)
+                    # passports
+                    passports = event.passports
+                    for passport in passports:
+                        self.texts.append(passport.description)
                 else:
                     logging.warning("no event in data_to_text")
             else:
