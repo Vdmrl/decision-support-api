@@ -139,7 +139,7 @@ class InstitutionForms(Base):
     __tablename__ = 'institution_forms'
 
     id_institution_forms = mapped_column(Integer, primary_key=True)
-    institution_form_name = mapped_column(String(600))
+    institution_form_name = mapped_column(String(600))  # used
 
     institution_institution_forms: Mapped[List['InstitutionInstitutionForms']] = relationship(
         'InstitutionInstitutionForms', uselist=True, back_populates='institution_forms')
@@ -222,8 +222,8 @@ class Regions(Base):
     __tablename__ = 'regions'
 
     id_regions = mapped_column(Integer, primary_key=True)
-    region_name = mapped_column(String(255))
-    region_code = mapped_column(String(255))
+    region_name = mapped_column(String(255))  # used
+    region_code = mapped_column(String(255))  # used
 
     institution_regions: Mapped[List['InstitutionRegions']] = relationship('InstitutionRegions', uselist=True,
                                                                            back_populates='regions')
@@ -454,7 +454,7 @@ class Institutes(Base):
     institute_name = mapped_column(String(1000))
     site = mapped_column(String(1000))
     logo = mapped_column(String(600))
-    description = mapped_column(Text)
+    description = mapped_column(Text)  # used
     logo_thumb = mapped_column(String(600))
     date_creation = mapped_column(DateTime)
     id_institutes_ctt = mapped_column(Integer)
@@ -766,6 +766,7 @@ class FormFields(Base):
     sets_values_fields: Mapped[List['SetsValuesFields']] = relationship('SetsValuesFields', uselist=True,
                                                                         back_populates='form_fields')
     project_data: Mapped[List['ProjectData']] = relationship('ProjectData', back_populates='form_fields')
+
 
 class IndustryDirections(Base):
     __tablename__ = 'industry_directions'

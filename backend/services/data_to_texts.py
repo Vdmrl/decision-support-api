@@ -6,6 +6,11 @@ from db.models.startup import Users  # account
 from db.models.startup import Projects, ProjectData, Forms, FormFields  # project data
 from db.models.startup import Passports, PassportData, PassportFields  # project passports
 
+from db.models.startup import (Supports, SupportSupportForms, SupportForms, SupportSupportMembers, SupportMembers,
+                               SupportSupportReasons, SupportReasons, SupportSupportDirections, SupportDirections,
+                               SupportRegions, Regions)
+from db.models.startup import (Institutes, InstitutionInstitutionForms, InstitutionRegions)
+
 import logging
 
 
@@ -61,7 +66,6 @@ class UserData:
         # TODO
         pass
 
-
     async def project_passport_to_texts(self, id_project: int) -> None:
         """
         denormalizes project passport into text
@@ -78,7 +82,7 @@ class UserData:
         async with async_session_factory() as session:
             query = (
                 select(Projects)
-                .options(joinedload(Projects.forms))
+                .options(joinedload(Projects.forms))  # many-to-one
                 .where(Projects.id_projects == id_project)
             )
             result = await session.execute(query)
@@ -93,6 +97,7 @@ class UserData:
                     logging.warning("no event in data_to_text")
             else:
                 logging.warning("no project in data_to_text")
+
     async def get_texts(self) -> str:
         """
         :return: list of texts
@@ -117,8 +122,45 @@ class SupportData:
         denormalizes institutes data into text
         :rtype: support id pk
         """
-        # TODO
-        pass
+        async with async_session_factory() as session:
+            query = (
+                select(Supports)
+                .options(
+                    joinedload(Supports.institutes).options(
+                        selectinload(Institutes.institution_institution_forms)
+                        .joinedload(InstitutionInstitutionForms.institution_forms),
+                        selectinload(Institutes.institution_regions)
+                        .joinedload(InstitutionRegions.regions)
+                    )
+                )  # many-to-one
+                .where(Supports.id_supports == id_support)
+            )
+            result = await session.execute(query)
+            support = result.scalar_one_or_none()
+            if support:
+                # institute
+                institute = support.institutes
+                if institute:
+                    self.texts.append(institute.description)
+                    # institute forms
+                    institution_institution_forms = institute.institution_institution_forms
+                    if institution_institution_forms:
+                        for institution_institution_form in institution_institution_forms:
+                            institution_form = institution_institution_form.institution_forms
+                            if institution_form:
+                                self.texts.append(institution_form.institution_form_name)
+                    # regions
+                    institution_regions = institute.institution_regions
+                    if institution_regions:
+                        for institution_region in institution_regions:
+                            region = institution_region.regions
+                            if region:
+                                self.texts.append(region.region_name)
+                                self.texts.append(region.region_code)
+                else:
+                    logging.warning("no institute in data_to_text")
+            else:
+                logging.warning("no support in data_to_text")
 
     async def get_texts(self) -> str:
         """
