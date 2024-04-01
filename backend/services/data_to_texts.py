@@ -3,13 +3,13 @@ from sqlalchemy.orm import joinedload, selectinload
 
 from db.engine import async_session_factory
 from db.models.startup import Users, UserProject  # account
-from db.models.startup import Projects, ProjectData, Forms, FormFields, Passports  # project data
-from db.models.startup import Passports, PassportData, PassportFields  # project passports
+from db.models.startup import Projects, ProjectData, Forms, Passports  # project data
+from db.models.startup import PassportData  # project passports
 
 from db.models.startup import (Supports, SupportSupportForms, SupportForms, SupportSupportMembers, SupportMembers,
                                SupportSupportReasons, SupportReasons, SupportSupportDirections, SupportDirections,
-                               SupportRegions, Regions)
-from db.models.startup import (Institutes, InstitutionInstitutionForms, InstitutionForms, InstitutionRegions, Regions)
+                               SupportRegions, Regions)  # supports
+from db.models.startup import (Institutes, InstitutionInstitutionForms, InstitutionForms, InstitutionRegions, Regions) # institutes
 
 import logging
 
@@ -78,15 +78,56 @@ class UserData:
         denormalizes project data into text
         :rtype: project id pk
         """
-        # TODO
-        pass
+        async with async_session_factory() as session:
+            query = (
+                select(Projects)
+                .options(selectinload(Projects.project_data))  # one-to-many
+                .where(Projects.id_projects == id_project)
+            )
+            result = await session.execute(query)
+            project = result.scalar_one_or_none()
+            if project:
+                datas = project.project_data
+                if datas:
+                    # project data
+                    for data in datas:
+                        # add label if data boolean and equal to "yes"
+                        if data.data and data.data.lower() != "none":
+                            if data.data.lower() == "да":
+                                self.texts.append(data.label)
+                            else:
+                                self.texts.append(data.data)
+
+                else:
+                    logging.warning("no project_data in data_to_text")
+            else:
+                logging.warning("no project in data_to_text")
 
     async def project_passport_to_texts(self, id_project: int) -> None:
         """
         denormalizes project passport into text
         :rtype: project id pk
         """
-        # TODO
+        async with async_session_factory() as session:
+            query = (
+                select(Projects)
+                .options(selectinload(Projects.passport_data))  # one-to-many
+                .where(Projects.id_projects == id_project)
+            )
+            result = await session.execute(query)
+            project = result.scalar_one_or_none()
+            if project:
+                passport_datas = project.passport_data
+                if passport_datas:
+                    # passport data
+                    for passport_data in passport_datas:
+                        # add label if data boolean and equal to "yes"
+                        if passport_data.data and passport_data.data.lower() != "none":
+                            self.texts.append(passport_data.data)
+                else:
+                    logging.warning("no passport_data in data_to_text")
+            else:
+                logging.warning("no project in data_to_text")
         pass
 
     async def event_to_texts(self, id_project: int) -> None:

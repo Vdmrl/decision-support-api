@@ -320,7 +320,7 @@ class SupportReasons(Base):
     __tablename__ = 'support_reasons'
 
     id_support_reasons = mapped_column(Integer, primary_key=True)
-    support_reason_name = mapped_column(String(600)) # used
+    support_reason_name = mapped_column(String(600))  # used
 
     support_support_reasons: Mapped[List['SupportSupportReasons']] = relationship('SupportSupportReasons', uselist=True,
                                                                                   back_populates='support_reasons')
@@ -897,7 +897,7 @@ class Passports(Base):
     date_start = mapped_column(Date)
     date_end = mapped_column(Date)
     status = mapped_column(String(600))
-    description = mapped_column(Text) # used
+    description = mapped_column(Text)  # used
 
     forms: Mapped['Forms'] = relationship('Forms', back_populates='passports')
     passport_fields: Mapped[List['PassportFields']] = relationship('PassportFields', uselist=True,
@@ -2030,7 +2030,7 @@ class PassportData(Base):
     id_passport_data = mapped_column(Integer, primary_key=True)
     passport_fields_id_passport_fields = mapped_column(Integer, nullable=False)
     projects_id_projects = mapped_column(Integer, nullable=False)
-    data = mapped_column(Text)
+    data = mapped_column(Text)  # used
     file = mapped_column(TINYINT(1))
 
     passport_fields: Mapped['PassportFields'] = relationship('PassportFields', back_populates='passport_data')
@@ -2079,9 +2079,9 @@ class ProjectData(Base):
     id_project_data = mapped_column(Integer, primary_key=True)
     field_name = mapped_column(String(255), nullable=False)
     projects_id_projects = mapped_column(Integer, nullable=False)
-    data = mapped_column(String(1000))
+    data = mapped_column(String(1000))  # used
     visible = mapped_column(TINYINT)
-    label = mapped_column(String(255))
+    label = mapped_column(String(255))  # used
     file = mapped_column(TINYINT)
     step = mapped_column(Integer)
     form_fields_id_form_fields = mapped_column(Integer, nullable=False)
