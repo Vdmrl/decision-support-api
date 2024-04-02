@@ -2,20 +2,28 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload, selectinload
 
 from db.engine import async_session_factory
-from db.models.startup import Users, UserProject  # account
-from db.models.startup import Projects, ProjectData, Forms, Passports  # project data
-from db.models.startup import PassportData  # project passports
+from db.models.startup import UserProject  # account. + Users
+from db.models.startup import Projects, Forms  # project data. + ProjectData, Passports
+# project passports. + PassportData
 
-from db.models.startup import (Supports, SupportSupportForms, SupportForms, SupportSupportMembers, SupportMembers,
-                               SupportSupportReasons, SupportReasons, SupportSupportDirections, SupportDirections,
-                               SupportRegions, Regions)  # supports
-from db.models.startup import (Institutes, InstitutionInstitutionForms, InstitutionForms, InstitutionRegions, Regions) # institutes
+from db.models.startup import (Supports, SupportSupportForms, SupportSupportMembers,
+                               SupportSupportReasons, SupportSupportDirections,
+                               SupportRegions)  # supports.
+# + SupportForms, SupportMembers, SupportReasons, SupportDirections, Regions
+
+from db.models.startup import (Institutes, InstitutionInstitutionForms, InstitutionRegions)
+# institutes. + InstitutionForms, Regions
 
 import logging
 
+from typing import Dict
 
-class UserData:
+
+class ProjectData:
     def __init__(self):
+        self.texts = []
+
+    def clear(self):
         self.texts = []
 
     async def accounts_to_texts(self, id_project: int) -> None:
@@ -162,15 +170,18 @@ class UserData:
             else:
                 logging.warning("no project in data_to_text")
 
-    async def get_texts(self) -> str:
+    async def get_text(self) -> str:
         """
-        :return: list of texts
+        :return: string text from project data
         """
-        return "".join(self.texts)
+        return " ".join(self.texts)
 
 
 class SupportData:
     def __init__(self):
+        self.texts = []
+
+    def clear(self):
         self.texts = []
 
     async def support_to_texts(self, id_support: int) -> None:
@@ -293,8 +304,29 @@ class SupportData:
             else:
                 logging.warning("no support in data_to_text")
 
-    async def get_texts(self) -> str:
+    async def get_text(self) -> str:
         """
-        :return: list of texts
+        :return: string text from support data
         """
-        return "".join(self.texts)
+        return " ".join(self.texts)
+
+    @staticmethod
+    async def get_all_texts() -> Dict:
+        """
+        :return: dictionary support id: text from support data
+        """
+        ind_to_support_text = dict()
+        sp_data = SupportData()
+        async with async_session_factory() as session:
+            query = select(Supports)
+            result = await session.execute(query)
+            supports = result.scalars().all()
+            if supports:
+                for support in supports:
+                    await sp_data.support_to_texts(support.id_supports)
+                    await sp_data.institute_to_texts(support.id_supports)
+                    ind_to_support_text[support.id_supports] = await sp_data.get_text()
+                    sp_data.clear()
+            else:
+                logging.warning("no supports in data_to_text")
+        return ind_to_support_text

@@ -1,20 +1,24 @@
 import asyncio
 
-from services.data_to_texts import UserData, SupportData
+from services.data2text import ProjectData, SupportData
+from services.text_ranker import ProjectRanker
+
 
 async def main():
-    user_data = UserData()
-    await user_data.accounts_to_texts(41)
-    await user_data.project_data_to_texts(41)
-    await user_data.project_passport_to_texts(41)
-    await user_data.event_to_texts(41)
+    ranker = ProjectRanker()
+    ranker.bind_to(SupportData.get_all_texts)
 
-    print(user_data.texts)
+    project_data = ProjectData()
+    await project_data.accounts_to_texts(41)
+    await project_data.project_data_to_texts(41)
+    await project_data.project_passport_to_texts(41)
+    await project_data.event_to_texts(41)
+    sorted_indexes = await ranker.sort_for(await project_data.get_text())
+    print(await project_data.get_text())
+    texts = await SupportData.get_all_texts()
+    for i in sorted_indexes:
+        print(texts[i])
 
-    support_data = SupportData()
-    await support_data.institute_to_texts(1)
-    await support_data.support_to_texts(1)
-    print(support_data.texts)
 
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
