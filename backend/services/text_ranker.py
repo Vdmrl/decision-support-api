@@ -1,16 +1,19 @@
 from sentence_transformers import SentenceTransformer, util
 from typing import Callable, Dict, List
 
-model = SentenceTransformer("all-MiniLM-L6-v2")  # initialize model
-
 
 class ProjectRanker:
-    def __init__(self) -> None:
+    def __init__(self, model_name: str = "all-MiniLM-L6-v2") -> None:
+        """
+        initialization with ml model initialization
+        :param model_name: model name. default: "all-MiniLM-L6-v2"
+        """
         self.id_to_texts_function = None
+        self.model = SentenceTransformer(model_name)  # initialize model
 
     def bind_to(self, get_id_to_texts_function: Callable[[], Dict]) -> None:
         """
-        Bind function which return id to texts to get latest data every request.
+        Bind function which return id to texts to get latest data every request (callback).
         It is impossible to save embeddings because data could be changed
         and I do not have access to check it changes in time.
         :param get_id_to_texts_function: function which return all id: support text
@@ -31,10 +34,10 @@ class ProjectRanker:
         # transform dict id: text to dict id: embedding
         id_to_embedding = dict()
         for ind, val in it_to_text.items():
-            id_to_embedding[ind] = model.encode(val, convert_to_tensor=True)
+            id_to_embedding[ind] = self.model.encode(val, convert_to_tensor=True)
 
         # transform compared text
-        project_embedding = model.encode(text)
+        project_embedding = self.model.encode(text)
 
         # sort dictionary values by cos similarity with argument text embedding
         id_to_embedding = dict(sorted(id_to_embedding.items(),

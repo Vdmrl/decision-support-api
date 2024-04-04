@@ -176,6 +176,21 @@ class ProjectData:
         """
         return " ".join(self.texts)
 
+    @staticmethod
+    async def is_in_db(project_id: int) -> bool:
+        """
+        check if project id in db projects
+        :param project_id: project db id
+        :return: true if project_id in projects else false
+        """
+        async with async_session_factory() as session:
+            query = (
+                select(Projects)
+                .filter(Projects.id_projects == project_id)
+            )
+            result = await session.execute(query)
+            return bool(result.scalar_one_or_none())
+
 
 class SupportData:
     def __init__(self):

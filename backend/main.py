@@ -1,24 +1,25 @@
-import asyncio
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-from services.data2text import ProjectData, SupportData
-from services.text_ranker import ProjectRanker
+from fastapi.staticfiles import StaticFiles
+from api.main import api_router
 
+app = FastAPI(title="decision support api")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-async def main():
-    ranker = ProjectRanker()
-    ranker.bind_to(SupportData.get_all_texts)
+# middleware
+origins = [
+    "http://localhost:8000",
+    "http://localhost:3000",
+]
 
-    project_data = ProjectData()
-    await project_data.accounts_to_texts(41)
-    await project_data.project_data_to_texts(41)
-    await project_data.project_passport_to_texts(41)
-    await project_data.event_to_texts(41)
-    sorted_indexes = await ranker.sort_for(await project_data.get_text())
-    print(await project_data.get_text())
-    texts = await SupportData.get_all_texts()
-    for i in sorted_indexes:
-        print(texts[i])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "OPTIONS", "PATCH", "DELETE", "PUT"],
+    allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers",
+                   "Access-Control-Allow-Origin", "Authorization"],
+)
 
-
-if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(main())
+app.include_router(api_router)
