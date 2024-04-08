@@ -1,24 +1,24 @@
 # import asyncio
 from typing import Annotated
 
-from sqlalchemy import String, create_engine
+from sqlalchemy import String
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy.orm import DeclarativeBase
 
 from db.config import settings
 
-sync_engine = create_engine(
-    url=settings.DATABASE_URL_pymysql,
-    echo=False
-)
-
 async_engine = create_async_engine(
-   url=settings.DATABASE_URL_aiomysql,
-   echo=False,
+    url=settings.DATABASE_URL_aiomysql,
+    echo=False,
 )
 
-session_factory = sessionmaker(sync_engine)
+test_async_engine = create_async_engine(
+    url=settings.TEST_DATABASE_URL_aiomysql,
+    echo=False,
+)
+
 async_session_factory = async_sessionmaker(async_engine)
+test_async_session_factory = async_sessionmaker(test_async_engine)
 
 str_256 = Annotated[str, 256]
 

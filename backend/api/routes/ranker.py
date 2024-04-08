@@ -8,11 +8,11 @@ from services.text_ranker import ProjectRanker
 
 router = APIRouter()
 ranker = ProjectRanker("all-MiniLM-L6-v2")  # create project ranker with "all-MiniLM-L6-v2" model
+ranker.bind_to(SupportData.get_all_texts)  # bind ranker to get all supports texts function
 
-
-@router.on_event("startup")
-async def startup_event():
-    ranker.bind_to(SupportData.get_all_texts)  # bind ranker to get all supports texts function
+#@router.on_event("startup")
+#async def startup_event():
+#    ranker.bind_to(SupportData.get_all_texts)  # bind ranker to get all supports texts function
 
 
 @router.get("/get_ranked_support_ids",
