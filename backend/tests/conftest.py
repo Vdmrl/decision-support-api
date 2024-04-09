@@ -1,6 +1,11 @@
 import asyncio
 from datetime import datetime
 
+from fastapi.testclient import TestClient
+from httpx import AsyncClient
+
+from main import app
+
 import pytest
 
 from sqlalchemy import insert
@@ -17,7 +22,7 @@ from db.models.startup import (Supports, SupportSupportForms, SupportSupportMemb
 from db.models.startup import (Institutes, InstitutionInstitutionForms, InstitutionRegions, InstitutionForms,
                                InstitutionStatuses)
 
-from typing import Generator
+from typing import Generator, AsyncGenerator
 
 
 @pytest.fixture(scope="session")
@@ -2069,3 +2074,9 @@ async def setup_async_test_db(event_loop):
 
     async with test_async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
+
+
+@pytest.fixture(scope="session")
+async def ac() -> AsyncGenerator[AsyncClient, None]:  # async test client
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        yield ac

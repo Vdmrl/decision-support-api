@@ -6,19 +6,17 @@ from typing import List
 from services.data2text import ProjectData, SupportData
 from services.text_ranker import ProjectRanker
 
+from schemas.ranker import SupportIds
+
 router = APIRouter()
 ranker = ProjectRanker("all-MiniLM-L6-v2")  # create project ranker with "all-MiniLM-L6-v2" model
 ranker.bind_to(SupportData.get_all_texts)  # bind ranker to get all supports texts function
-
-#@router.on_event("startup")
-#async def startup_event():
-#    ranker.bind_to(SupportData.get_all_texts)  # bind ranker to get all supports texts function
 
 
 @router.get("/get_ranked_support_ids",
             summary="return ranked ids of supports according to project id",
             status_code=status.HTTP_200_OK,
-            response_model=List[int])
+            response_model=SupportIds)
 async def get_ranked_support_ids(project_id: int):
     if not await ProjectData.is_in_db(project_id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
@@ -34,4 +32,4 @@ async def get_ranked_support_ids(project_id: int):
     # sort
     sorted_indexes = await ranker.sort_for(project_text)
 
-    return sorted_indexes
+    return SupportIds(support_ids=sorted_indexes)
