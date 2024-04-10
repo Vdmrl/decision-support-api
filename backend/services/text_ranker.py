@@ -1,7 +1,8 @@
 from sentence_transformers import SentenceTransformer, util
 from typing import Callable, Dict, List
+from services.text_preprocessing import Preprocessing
 
-
+# this module can not be tested because it use non-deterministic SentenceTransformer model
 class ProjectRanker:
     def __init__(self, model_name: str = "all-MiniLM-L6-v2") -> None:
         """
@@ -33,8 +34,14 @@ class ProjectRanker:
 
         # transform dict id: text to dict id: embedding
         id_to_embedding = dict()
-        for ind, val in it_to_text.items():
-            id_to_embedding[ind] = self.model.encode(val, convert_to_tensor=True)
+        for ind, text in it_to_text.items():
+            # text preprocessing
+            preprocessed_text = Preprocessing.lowercase(text)
+            preprocessed_text = Preprocessing.delete_not_letters(preprocessed_text)
+            preprocessed_text = Preprocessing.delete_stop_words(preprocessed_text)
+
+            #
+            id_to_embedding[ind] = self.model.encode(preprocessed_text, convert_to_tensor=True)
 
         # transform compared text
         project_embedding = self.model.encode(text)
