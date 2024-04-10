@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
         python-versions:
           - "3.11"
           - "3.12"
@@ -17,8 +17,8 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: go to backend folder
-        run: cd .\backend\
+      - name: Go to backend folder
+        run: cd backend
 
       - name: Checkout code
         uses: actions/checkout@v3
@@ -26,7 +26,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python
         with:
-          python-version: $ {{matrix.python-versions }}
+          python-version: $ {{ matrix.python-versions }}
 
       - name: Install dependencies
         run: pip install -r requirements.txt
