@@ -1,0 +1,35 @@
+version: "3.7"
+services:
+  db:
+    image: mysql
+    container_name: db_app
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+    ports:
+      - "5400:8000"
+    expose:
+      - "8000"
+
+  test-db:
+    image: mysql
+    container_name: db_test_app
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+    ports:
+      - "5401:8000"
+    expose:
+      - "8000"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fastapi_app
+    environment:
+      - .env.prod
+    depends_on:
+      - "db"
+    ports:
+      - 8000:8000

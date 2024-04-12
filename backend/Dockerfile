@@ -1,19 +1,13 @@
-FROM python:3.11-buster
-
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+FROM python:3.11
 
 WORKDIR /code
 
-RUN apt-get update && \
-    apt install -y python3-dev
+COPY requirements.txt .
 
-RUN pip install --upgrade pip
-RUN pip install poetry
-ADD pyproject.toml .
-RUN poetry config virtualenvs.create false
-RUN poetry install --no-root --no-interaction --no-ansi
-
-EXPOSE 8000
+RUN pip install -r requirements.txt
 
 COPY . .
+
+CMD alembic upgrade head
+
+CMD gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000

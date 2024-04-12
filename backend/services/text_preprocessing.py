@@ -1,5 +1,4 @@
 import re
-from nltk.stem import WordNetLemmatizer
 
 
 class Preprocessing:
