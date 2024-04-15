@@ -183,6 +183,11 @@ class ProjectData:
         :param project_id: project db id
         :return: true if project_id in projects else false
         """
+        # table does not exist
+        if 'projects' not in Projects.metadata.tables.keys():
+            return False
+
+        # project does not exist
         async with async_session_factory() as session:
             query = (
                 select(Projects)

@@ -1,3 +1,5 @@
+# for connection with real database reflection could be used instead of models below
+
 from typing import List, Optional
 
 from sqlalchemy import Date, DateTime, Float, ForeignKeyConstraint, Index, Integer, String, Text, text
@@ -511,7 +513,7 @@ class Users(Base):
     photo = mapped_column(String(255))
     photo_thumb = mapped_column(String(255))
     inn = mapped_column(String(256))
-    year_of_graduation = mapped_column(String(45))  # used
+    year_of_graduation = mapped_column(String(45))
     scientific_specialty = mapped_column(Text)  # used
     work_experience = mapped_column(Text)  # used
     tracking_experience = mapped_column(Text)  # used

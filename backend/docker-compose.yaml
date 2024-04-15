@@ -1,11 +1,12 @@
 version: "3.7"
 services:
-  db:
+  db: # in production replace db service with real database and models with reflection
     image: mysql
     container_name: db_app
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=startupsupport
     ports:
       - "5400:8000"
     expose:
@@ -17,6 +18,7 @@ services:
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=startupsupport_test
     ports:
       - "5401:8000"
     expose:
@@ -28,7 +30,7 @@ services:
       dockerfile: Dockerfile
     container_name: fastapi_app
     environment:
-      - .env.prod
+      - ENV_FILE=.env.prod
     depends_on:
       - "db"
     ports:

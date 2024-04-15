@@ -40,11 +40,13 @@ class ProjectRanker:
             preprocessed_text = Preprocessing.delete_not_letters(preprocessed_text)
             preprocessed_text = Preprocessing.delete_stop_words(preprocessed_text)
 
-            #
             id_to_embedding[ind] = self.model.encode(preprocessed_text, convert_to_tensor=True)
 
         # transform compared text
-        project_embedding = self.model.encode(text)
+        preprocessed_project_text = Preprocessing.lowercase(text)
+        preprocessed_project_text = Preprocessing.delete_not_letters(preprocessed_project_text)
+        preprocessed_project_text = Preprocessing.delete_stop_words(preprocessed_project_text)
+        project_embedding = self.model.encode(preprocessed_project_text)
 
         # sort dictionary values by cos similarity with argument text embedding
         id_to_embedding = dict(sorted(id_to_embedding.items(),
