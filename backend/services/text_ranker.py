@@ -2,6 +2,7 @@ from sentence_transformers import SentenceTransformer, util
 from typing import Callable, Dict, List
 from services.text_preprocessing import Preprocessing
 
+
 # this module can not be tested because it use non-deterministic SentenceTransformer model
 class ProjectRanker:
     def __init__(self, model_name: str = "all-MiniLM-L6-v2") -> None:
@@ -29,6 +30,8 @@ class ProjectRanker:
         :param text: text to be compared with pinned function texts
         :return: list of ids sorted by cos sim
         """
+        if self.id_to_texts_function is None:
+            return None
 
         it_to_text = await self.id_to_texts_function()
 
