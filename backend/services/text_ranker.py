@@ -37,12 +37,11 @@ class ProjectRanker:
 
         # transform dict id: text to dict id: embedding
         id_to_embedding = dict()
-        for ind, text in it_to_text.items():
+        for ind, support_text in it_to_text.items():
             # text preprocessing
-            preprocessed_text = Preprocessing.lowercase(text)
+            preprocessed_text = Preprocessing.lowercase(support_text)
             preprocessed_text = Preprocessing.delete_not_letters(preprocessed_text)
             preprocessed_text = Preprocessing.delete_stop_words(preprocessed_text)
-
             id_to_embedding[ind] = self.model.encode(preprocessed_text, convert_to_tensor=True)
 
         # transform compared text
