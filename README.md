@@ -10,7 +10,7 @@ The Decision Support API module is designed for a startup acceleration platform,
 + Migrations using Alembic
 + Module for converting data from a database into text with ORM
 + Module for text preprocessing
-+ Module for text ranking using sBERT embedding and socine distance
++ Module for text ranking using sBERT embedding and cosine distance
 + Autotests for API and database with pytest
 + Fully containerized application
 
@@ -20,7 +20,7 @@ The Decision Support API module is designed for a startup acceleration platform,
 
 + Change .env.prod data to your production database configuration
 
-+ Replace docker-compose db service with real database
++ Replace docker-compose db service with a real database
 
 ## Running server
 
