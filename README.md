@@ -5,7 +5,8 @@
 The Decision Support API module is designed for a startup acceleration platform, assisting in ranking help measures for the current project using sBERT embeddings and cosine distance.
 
 ### Main features:
-+ Asynchronous API with swagger documentation 
++ Asynchronous API with swagger documentation
++ Caching with Redis
 + Interaction with the database using SQLalchemy and async driver aiomysql
 + Migrations using Alembic
 + Module for converting data from a database into text with ORM
