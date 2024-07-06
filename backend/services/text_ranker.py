@@ -1,9 +1,9 @@
 from sentence_transformers import SentenceTransformer, util
 from typing import Callable, Dict, List
 from services.text_preprocessing import Preprocessing
+import logging
 
-
-# this module can not be tested because it use non-deterministic SentenceTransformer model
+# this module can not be tested because it uses non-deterministic SentenceTransformer model
 class ProjectRanker:
     def __init__(self, model_name: str = "all-MiniLM-L6-v2") -> None:
         """
@@ -37,17 +37,20 @@ class ProjectRanker:
 
         # transform dict id: text to dict id: embedding
         id_to_embedding = dict()
-        for ind, support_text in it_to_text.items():
+        logging.info("measures:")
+        for ind, txt in it_to_text.items():
             # text preprocessing
-            preprocessed_text = Preprocessing.lowercase(support_text)
+            preprocessed_text = Preprocessing.lowercase(txt)
             preprocessed_text = Preprocessing.delete_not_letters(preprocessed_text)
             preprocessed_text = Preprocessing.delete_stop_words(preprocessed_text)
+            logging.info(ind, preprocessed_text)
             id_to_embedding[ind] = self.model.encode(preprocessed_text, convert_to_tensor=True)
 
         # transform compared text
         preprocessed_project_text = Preprocessing.lowercase(text)
         preprocessed_project_text = Preprocessing.delete_not_letters(preprocessed_project_text)
         preprocessed_project_text = Preprocessing.delete_stop_words(preprocessed_project_text)
+
         project_embedding = self.model.encode(preprocessed_project_text)
 
         # sort dictionary values by cos similarity with argument text embedding
