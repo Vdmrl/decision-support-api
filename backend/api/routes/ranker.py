@@ -1,26 +1,26 @@
 from fastapi import APIRouter, status
 from fastapi.exceptions import HTTPException
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from fastapi_cache.decorator import cache
+from redis import asyncio as aioredis
 
+from schemas.ranker import SupportIds
 from services.data2text import ProjectData, SupportData
 from services.text_ranker import ProjectRanker
 
-from schemas.ranker import SupportIds
-
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.redis import RedisBackend
-
-from redis import asyncio as aioredis
-from fastapi_cache.decorator import cache
 
 router = APIRouter()
 ranker = ProjectRanker("all-MiniLM-L6-v2")  # create project ranker with "all-MiniLM-L6-v2" model
 ranker.bind_to(SupportData.get_all_texts)  # bind ranker to get all supports texts function
 
 
-@router.get("/get_ranked_support_ids",
-            summary="return ranked ids of supports according to project id",
-            status_code=status.HTTP_200_OK,
-            response_model=SupportIds)
+@router.get(
+    "/get_ranked_support_ids",
+    summary="return ranked ids of supports according to project id",
+    status_code=status.HTTP_200_OK,
+    response_model=SupportIds,
+)
 @cache(expire=3600)  # 1 hour cache
 async def get_ranked_support_ids(project_id: int):
     if not await ProjectData.is_in_db(project_id):
@@ -37,6 +37,7 @@ async def get_ranked_support_ids(project_id: int):
     sorted_indexes = await ranker.sort_for(project_text)
 
     return SupportIds(support_ids=sorted_indexes)
+
 
 @router.on_event("startup")
 async def startup():

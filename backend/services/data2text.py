@@ -1,22 +1,24 @@
+import logging
+from typing import Dict
+
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload, selectinload
 
 from db.engine import async_session_factory
-from db.models.startup import UserProject  # account. + Users
-from db.models.startup import Projects, Forms  # project data. + ProjectData, Passports
-# project passports. + PassportData
-
-from db.models.startup import (Supports, SupportSupportForms, SupportSupportMembers,
-                               SupportSupportReasons, SupportSupportDirections,
-                               SupportRegions)  # supports.
-# + SupportForms, SupportMembers, SupportReasons, SupportDirections, Regions
-
-from db.models.startup import (Institutes, InstitutionInstitutionForms, InstitutionRegions)
-# institutes. + InstitutionForms, Regions
-
-import logging
-
-from typing import Dict
+from db.models.startup import (
+    Forms,
+    Institutes,
+    InstitutionInstitutionForms,
+    InstitutionRegions,
+    Projects,
+    SupportRegions,
+    Supports,
+    SupportSupportDirections,
+    SupportSupportForms,
+    SupportSupportMembers,
+    SupportSupportReasons,
+    UserProject,
+)
 
 
 class ProjectData:
@@ -31,13 +33,14 @@ class ProjectData:
         denormalizes account data into text
         :rtype: user id pk
         """
-        async with (async_session_factory() as session):
-            query = (select(Projects)
-                     .options(  # forms
-                selectinload(Projects.user_project)  # one-to-many
-                .joinedload(UserProject.users))  # many-to-one
-                     .where(Projects.id_projects == id_project)
-                     )
+        async with async_session_factory() as session:
+            query = (
+                select(Projects)
+                .options(  # forms
+                    selectinload(Projects.user_project).joinedload(UserProject.users)  # one-to-many
+                )  # many-to-one
+                .where(Projects.id_projects == id_project)
+            )
             result = await session.execute(query)
             project = result.scalar_one_or_none()
             if project:
@@ -146,10 +149,7 @@ class ProjectData:
         async with async_session_factory() as session:
             query = (
                 select(Projects)
-                .options(
-                    joinedload(Projects.forms).options(
-                        selectinload(Forms.passports)
-                    ))  # many-to-one
+                .options(joinedload(Projects.forms).options(selectinload(Forms.passports)))  # many-to-one
                 .where(Projects.id_projects == id_project)
             )
             result = await session.execute(query)
@@ -184,15 +184,12 @@ class ProjectData:
         :return: true if project_id in projects else false
         """
         # table does not exist
-        if 'projects' not in Projects.metadata.tables.keys():
+        if "projects" not in Projects.metadata.tables.keys():
             return False
 
         # project does not exist
         async with async_session_factory() as session:
-            query = (
-                select(Projects)
-                .filter(Projects.id_projects == project_id)
-            )
+            query = select(Projects).filter(Projects.id_projects == project_id)
             result = await session.execute(query)
             return bool(result.scalar_one_or_none())
 
@@ -214,20 +211,25 @@ class SupportData:
                 select(Supports)
                 .options(
                     # forms
-                    selectinload(Supports.support_support_forms)  # one-to-many
-                    .joinedload(SupportSupportForms.support_forms),  # many-to-one
+                    selectinload(Supports.support_support_forms).joinedload(  # one-to-many
+                        SupportSupportForms.support_forms
+                    ),  # many-to-one
                     # directions
-                    selectinload(Supports.support_support_directions)  # one-to-many
-                    .joinedload(SupportSupportDirections.support_directions),  # many-to-one
+                    selectinload(Supports.support_support_directions).joinedload(  # one-to-many
+                        SupportSupportDirections.support_directions
+                    ),  # many-to-one
                     # reasons
-                    selectinload(Supports.support_support_reasons)  # one-to-many
-                    .joinedload(SupportSupportReasons.support_reasons),  # many-to-one
+                    selectinload(Supports.support_support_reasons).joinedload(  # one-to-many
+                        SupportSupportReasons.support_reasons
+                    ),  # many-to-one
                     # members
-                    selectinload(Supports.support_support_members)  # one-to-many
-                    .joinedload(SupportSupportMembers.support_members),  # many-to-one
+                    selectinload(Supports.support_support_members).joinedload(  # one-to-many
+                        SupportSupportMembers.support_members
+                    ),  # many-to-one
                     # regions
-                    selectinload(Supports.support_regions)  # one-to-many
-                    .joinedload(SupportRegions.regions),  # many-to-one
+                    selectinload(Supports.support_regions).joinedload(  # one-to-many
+                        SupportRegions.regions
+                    ),  # many-to-one
                 )
                 .where(Supports.id_supports == id_support)
             )
@@ -289,10 +291,12 @@ class SupportData:
                 select(Supports)
                 .options(
                     joinedload(Supports.institutes).options(  # many-to-one
-                        selectinload(Institutes.institution_institution_forms)  # one-to-many
-                        .joinedload(InstitutionInstitutionForms.institution_forms),  # many-to-one
-                        selectinload(Institutes.institution_regions)  # one-to-many
-                        .joinedload(InstitutionRegions.regions)  # many-to-one
+                        selectinload(Institutes.institution_institution_forms).joinedload(  # one-to-many
+                            InstitutionInstitutionForms.institution_forms
+                        ),  # many-to-one
+                        selectinload(Institutes.institution_regions).joinedload(  # one-to-many
+                            InstitutionRegions.regions
+                        ),  # many-to-one
                     )
                 )
                 .where(Supports.id_supports == id_support)

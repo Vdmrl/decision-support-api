@@ -7,6 +7,7 @@ from sqlalchemy.orm import DeclarativeBase
 
 from db.config import settings
 
+
 async_engine = create_async_engine(
     url=settings.DATABASE_URL_aiomysql,
     echo=False,
@@ -24,9 +25,7 @@ str_256 = Annotated[str, 256]
 
 
 class Base(DeclarativeBase):
-    type_annotation_map = {
-        str_256: String(256)
-    }
+    type_annotation_map = {str_256: String(256)}
 
     repr_cols_num = 3
     repr_cols = tuple()

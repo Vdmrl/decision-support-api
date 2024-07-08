@@ -1,7 +1,10 @@
-from sentence_transformers import SentenceTransformer, util
-from typing import Callable, Dict, List
-from services.text_preprocessing import Preprocessing
 import logging
+from typing import Callable, Dict, List
+
+from sentence_transformers import SentenceTransformer, util
+
+from services.text_preprocessing import Preprocessing
+
 
 # this module can not be tested because it uses non-deterministic SentenceTransformer model
 class ProjectRanker:
@@ -54,6 +57,5 @@ class ProjectRanker:
         project_embedding = self.model.encode(preprocessed_project_text)
 
         # sort dictionary values by cos similarity with argument text embedding
-        id_to_embedding = dict(sorted(id_to_embedding.items(),
-                                      key=lambda x: util.cos_sim(x[1], project_embedding)))
+        id_to_embedding = dict(sorted(id_to_embedding.items(), key=lambda x: util.cos_sim(x[1], project_embedding)))
         return id_to_embedding.keys()
