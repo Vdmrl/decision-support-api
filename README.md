@@ -6,15 +6,16 @@ The Decision Support API module is designed for a startup acceleration platform,
 
 ### Main features:
 + Asynchronous API with swagger documentation
-+ Caching with Redis
-+ Logging with Python JSON logger
-+ Sentry integration
++ Caching with Redis 
 + Interaction with the database using SQLalchemy and async driver aiomysql
 + Migrations using Alembic
 + Module for converting data from a database into text with ORM
 + Module for text preprocessing
 + Module for text ranking using sBERT embedding and cosine distance
 + Autotests for API and database with pytest (with full database creation)
++ Logging with Python JSON logger
++ Sentry integration
++ Monitoring with Grafana
 + Linters with GitHub CI
 + Fully containerized application
 

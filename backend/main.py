@@ -3,6 +3,7 @@ import time
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from api.main import api_router
 
@@ -13,6 +14,7 @@ import sentry_sdk
 app = FastAPI(title="decision support api")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# sentry
 sentry_sdk.init(
     dsn="https://18153d7658f11dadd825b4b007bd6f3c@o4507572996210688.ingest.de.sentry.io/4507573002436688",
     # Set traces_sample_rate to 1.0 to capture 100%
@@ -23,6 +25,13 @@ sentry_sdk.init(
     # We recommend adjusting this value in production.
     profiles_sample_rate=1.0,
 )
+
+# prometheus + grafana
+instrumentator = Instrumentator(
+    should_group_status_codes=False,
+    excluded_handlers=[".*admin.*", "/metrics"]
+)
+instrumentator.instrument(app).expose(app)
 
 # middleware
 origins = [
