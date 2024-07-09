@@ -1,4 +1,4 @@
-import logging
+from logger import logger
 from typing import Callable, Dict, List
 
 from sentence_transformers import SentenceTransformer, util
@@ -39,13 +39,13 @@ class ProjectRanker:
 
         # transform dict id: text to dict id: embedding
         id_to_embedding = dict()
-        logging.info("measures:")
         for ind, txt in it_to_text.items():
             # text preprocessing
             preprocessed_text = Preprocessing.lowercase(txt)
             preprocessed_text = Preprocessing.delete_not_letters(preprocessed_text)
             preprocessed_text = Preprocessing.delete_stop_words(preprocessed_text)
-            logging.info(ind, preprocessed_text)
+            logger.info("added measure", extra={
+                "index": ind, "text": preprocessed_text[:100]})
             id_to_embedding[ind] = self.model.encode(preprocessed_text, convert_to_tensor=True)
 
         # transform compared text

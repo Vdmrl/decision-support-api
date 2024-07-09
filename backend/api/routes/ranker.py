@@ -9,6 +9,8 @@ from schemas.ranker import SupportIds
 from repositories.data2text import ProjectData, SupportData
 from services.text_ranker import ProjectRanker
 
+from logger import logger
+
 
 router = APIRouter()
 ranker = ProjectRanker("all-MiniLM-L6-v2")  # create project ranker with "all-MiniLM-L6-v2" model
@@ -35,6 +37,12 @@ async def get_ranked_support_ids(project_id: int):
 
     # sort
     sorted_indexes = await ranker.sort_for(project_text)
+
+    logger.info("supports ranked successfully", exc_info={
+        "project_id": project_id,
+        "project_text": project_text,
+        "sorted_indexes": sorted_indexes,
+    })
 
     return SupportIds(support_ids=sorted_indexes)
 
