@@ -7,13 +7,17 @@ The Decision Support API module is designed for a startup acceleration platform,
 ### Main features:
 + Asynchronous API with swagger documentation
 + Caching with Redis
++ Logging with Python JSON logger
++ Sentry integration
 + Interaction with the database using SQLalchemy and async driver aiomysql
 + Migrations using Alembic
 + Module for converting data from a database into text with ORM
 + Module for text preprocessing
 + Module for text ranking using sBERT embedding and cosine distance
-+ Autotests for API and database with pytest
++ Autotests for API and database with pytest (with full database creation)
++ Linters with GitHub CI
 + Fully containerized application
+
 
 ## Preparing environment and docker
 
@@ -56,11 +60,16 @@ go to the local host address: http://127.0.0.1:8000/
     ```shell
     python3 -m pip install --user -r requirements.txt
     ```
+   
+4. Run pytest
+    ```shell
+    pytest
+    ```
 
 4. Run server using gunicorn:
 
     ```shell
-    python uvicorn main:app --reload
+    uvicorn main:app --reload
     ```
 
 go to the local host address: http://127.0.0.1:8000/

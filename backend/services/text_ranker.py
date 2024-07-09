@@ -1,4 +1,4 @@
-import logging
+from logger import logger
 from typing import Callable, Dict, List
 
 from sentence_transformers import SentenceTransformer, util
@@ -6,7 +6,6 @@ from sentence_transformers import SentenceTransformer, util
 from services.text_preprocessing import Preprocessing
 
 
-# this module can not be tested because it uses non-deterministic SentenceTransformer model
 class ProjectRanker:
     def __init__(self, model_name: str = "all-MiniLM-L6-v2") -> None:
         """
@@ -40,13 +39,13 @@ class ProjectRanker:
 
         # transform dict id: text to dict id: embedding
         id_to_embedding = dict()
-        logging.info("measures:")
         for ind, txt in it_to_text.items():
             # text preprocessing
             preprocessed_text = Preprocessing.lowercase(txt)
             preprocessed_text = Preprocessing.delete_not_letters(preprocessed_text)
             preprocessed_text = Preprocessing.delete_stop_words(preprocessed_text)
-            logging.info(ind, preprocessed_text)
+            logger.info("added measure", extra={
+                "index": ind, "text": preprocessed_text[:100]})
             id_to_embedding[ind] = self.model.encode(preprocessed_text, convert_to_tensor=True)
 
         # transform compared text

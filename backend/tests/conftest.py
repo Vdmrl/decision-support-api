@@ -1,6 +1,8 @@
 import asyncio
 from datetime import datetime
+from functools import wraps
 from typing import AsyncGenerator, Generator
+from unittest import mock
 
 import pytest
 from fastapi.testclient import TestClient
@@ -52,6 +54,28 @@ def event_loop(request) -> Generator:  # noqa: indirect usage
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
+
+
+# We need to disable the @cache decorator during testing
+def mock_cache(*args, **kwargs):
+    def wrapper(func):
+        @wraps(func)
+        async def inner(*args, **kwargs):
+            return await func(*args, **kwargs)
+
+        return inner
+
+    return wrapper
+
+
+mock.patch("fastapi_cache.decorator.cache", mock_cache).start()
+
+
+@pytest.fixture(scope="module")
+async def client():
+    from main import app  # FastAPI "app" instance needs to be imported after mocking
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        yield client
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -4180,9 +4204,3 @@ async def setup_async_test_db(event_loop):
 
     async with test_async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
-
-
-@pytest.fixture(scope="session")
-async def ac() -> AsyncGenerator[AsyncClient, None]:  # async test client
-    async with AsyncClient(app=app, base_url="http://test") as ac:
-        yield ac

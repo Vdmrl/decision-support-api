@@ -6,8 +6,10 @@ from fastapi_cache.decorator import cache
 from redis import asyncio as aioredis
 
 from schemas.ranker import SupportIds
-from services.data2text import ProjectData, SupportData
+from repositories.data2text import ProjectData, SupportData
 from services.text_ranker import ProjectRanker
+
+from logger import logger
 
 
 router = APIRouter()
@@ -35,6 +37,12 @@ async def get_ranked_support_ids(project_id: int):
 
     # sort
     sorted_indexes = await ranker.sort_for(project_text)
+
+    logger.info("supports ranked successfully", exc_info={
+        "project_id": project_id,
+        "project_text": project_text,
+        "sorted_indexes": sorted_indexes,
+    })
 
     return SupportIds(support_ids=sorted_indexes)
 

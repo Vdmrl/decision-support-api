@@ -1,9 +1,6 @@
 import pytest
 
-from db.config import settings
-from db.engine import Base, test_async_engine, test_async_session_factory
-from db.models.startup import UserProject, Users  # account. + Users, Groups
-from services.data2text import ProjectData, SupportData
+from repositories.data2text import ProjectData, SupportData
 
 
 class TestProjectData:
