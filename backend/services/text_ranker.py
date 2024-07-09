@@ -6,7 +6,6 @@ from sentence_transformers import SentenceTransformer, util
 from services.text_preprocessing import Preprocessing
 
 
-# this module can not be tested because it uses non-deterministic SentenceTransformer model
 class ProjectRanker:
     def __init__(self, model_name: str = "all-MiniLM-L6-v2") -> None:
         """

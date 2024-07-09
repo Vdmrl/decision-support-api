@@ -1,9 +1,6 @@
-from typing import List
-
 from httpx import AsyncClient
 
-from schemas.ranker import SupportIds
-from services.data2text import SupportData
+from repositories.data2text import SupportData
 
 
 async def test_nonexistent_index(ac: AsyncClient):

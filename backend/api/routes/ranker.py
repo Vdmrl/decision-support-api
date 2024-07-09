@@ -6,7 +6,7 @@ from fastapi_cache.decorator import cache
 from redis import asyncio as aioredis
 
 from schemas.ranker import SupportIds
-from services.data2text import ProjectData, SupportData
+from repositories.data2text import ProjectData, SupportData
 from services.text_ranker import ProjectRanker
 
 
